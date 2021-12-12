@@ -60,8 +60,8 @@ async function run() {
       nodemailerMailgun.sendMail(
         {
           from: "Mehedi@Hasan.com",
-          // to: "info@redpositive.i",
-          to: "mehedihasansagor1995@gmail.com",
+          to: "info@redpositive.in",
+          // to: "mehedihasansagor1995@gmail.com",
           subject: "Job Task",
           html: `
            <h3>Name:${req.body.checkBoxData.map((D) => D.name)}</h3>,
