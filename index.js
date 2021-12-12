@@ -51,7 +51,7 @@ async function run() {
       // nodemailer api and domain
       const auth = {
         auth: {
-          api_key: `${process.env.api_key}`,
+          api_key: `${process.env.API_KEY}`,
           domain: `${process.env.DOMAIN}`,
         },
       };
