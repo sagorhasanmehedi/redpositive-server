@@ -3,6 +3,9 @@ const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const ObjectId = require("mongodb").ObjectId;
+const nodemailer = require("nodemailer");
+const mg = require("nodemailer-mailgun-transport");
+
 port = process.env.PORT || 7000;
 
 app.use(cors());
@@ -33,7 +36,6 @@ async function run() {
     // get data
     app.get("/data", async (req, res) => {
       const result = await tableDataCollection.find({}).toArray();
-      console.log(result);
       res.send(result);
     });
 
@@ -42,6 +44,43 @@ async function run() {
       const query = { _id: ObjectId(req.params.id) };
       const result = await tableDataCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // send email by nodemailer
+    app.post("/email", (req, res) => {
+      // nodemailer api and domain
+      const auth = {
+        auth: {
+          api_key: `${process.env.api_key}`,
+          domain: `${process.env.DOMAIN}`,
+        },
+      };
+      const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+      nodemailerMailgun.sendMail(
+        {
+          from: "Mehedi@Hasan.com",
+          // to: "info@redpositive.i",
+          to: "mehedihasansagor1995@gmail.com",
+          subject: "Job Task",
+          html: `
+           <h3>Name:${req.body.checkBoxData.map((D) => D.name)}</h3>,
+          <h3>Phone Number:${req.body.checkBoxData.map(
+            (D) => D.phoneNumber
+          )}</h3>
+           <h3>Hobbies:${req.body.checkBoxData.map((D) => D.hobbies)}</h3>,
+           <h3>Email     :${req.body.checkBoxData.map((D) => D.email)}</h3>,
+           
+           `,
+        },
+        (err) => {
+          if (err) {
+            res.send(`${err}`);
+          } else {
+            res.send("Email send");
+          }
+        }
+      );
     });
   } finally {
     // await client.close();
